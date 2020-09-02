@@ -1,6 +1,7 @@
 import numpy as np
 import h5py
 import pygalaxev_cosmology
+from pygalaxev_cosmology import L_Sun, Mpc, c as csol
 from scipy.interpolate import splrep, splev, splint
 import os
 
@@ -14,12 +15,7 @@ filtdir = pygalaxevdir+'/filters/'
 redshift = 0.2
 Dlum = pygalaxev_cosmology.Dlum(redshift) # luminosity distance in Mpc
 
-Mpc = pygalaxev_cosmology.Mpc # Mpc in cgs units
-csol = pygalaxev_cosmology.c # speed of light in cgs units
-
 log_mstar = 11.
-
-L_Sun = 3.826e33 # Solar luminosity in cgs units
 
 Z = 0.02
 tau = 1.

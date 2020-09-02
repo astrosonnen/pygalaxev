@@ -1,7 +1,7 @@
 # Stellar population synthesis and stellar mass fitting with BC03 models
 
 This module uses the stellar population synthesis code GALAXEV (Bruzual \& Charlot 2003, BC03) to create composite stellar population (CSP) models and predict broad band magnitudes on a grid of stellar population parameters (stellar mass, star formation history, metallicity, dust attenuation). 
-It also contains example scripts to fit for the stellar mass of galaxies observed with KiDS, using BC03 CSP models.
+It also contains example scripts to fit for the stellar mass of galaxies observed with VST, using BC03 CSP models.
 
 ## Requirements
 
@@ -27,39 +27,37 @@ You can download bc03 from [here](http://www.bruzual.org/bc03/). Several version
 
 In order to be able to run bc03 code properly from any directory, you'll need to source the `.bc_bash` file. You might want to add `source $bc03/.bc_bash` to your `.bashrc` file.
 
-### Example 1: create CSP models with exponentially decaying star formation history
+### Example 1: create a CSP model with exponentially decaying star formation history
 
-The file `examples/make_csp.py` included in this module reads a set of SSP models from the bc03 package (in this case the models obtained with the BaSeL spectral library and a Kroupa IMF) and creates composite stellar population models corresponding to an exponentially decaying star formation history, over a grid of values of metallicity, star formation decay time and dust attenuation.
+The file `examples/make_one_csp.py` included in this module reads a set of SSP models from the bc03 package (in this case the models obtained with the BaSeL spectral library and a Chabrier IMF) and creates a composite stellar population model with an exponentially decaying star formation history, a given metallicity (out of the values sampled by the Padova 1994 models), a fixed exponential decay timescale 'tau' and a fixed dust optical depth tau_V.
 To run it,
+- add this directory to your PYTHONPATH environment variable
 - copy the file to a directory of your choice
 - change the path assigned to the variable `ssp_dir` in line 8, to match that of your installation of bc03 and your desired SSP models.
-- change the path assigned to the variable `work_dir` in line 9, to wherever you wish to run this code (keep in mind that around 10k files will be created).
-- add `stellarpop` to your `$PYTHONPATH` environment variable
-- run `python make_csp.py`
+- change the path assigned to the variable `work_dir` in line 9, to wherever you wish to run this code.
+- run `python make_one_csp.py`
 
-This code should take a few hours to run. The end result should be a large (i.e. thousands) set of files named 'bc03_chab_...eps=0.000.mass' and 'bc03_chab_...eps=0.000.ised'. The `.ised` files contain the synthetic spectral energy distribution of each CSP, but are in binary format. To convert them to a more readable format, you'll need to run the script `galaxevpl` included in bc03 (but the code presented in the next example will do that for you). The `.mass` files are tables listing the evolution of the stellar mass as a function of age for each CSP. They also list luminosity and M/L in a few standard bands.
+The code should take a few seconds to run. The end result should be a pair of files named 'bc03_chab_...eps=0.000.mass' and 'bc03_chab_...eps=0.000.ised'. The `.ised` files contain the synthetic spectral energy distribution of the CSP over a broad range of ages, but are in binary format. To convert them to a more readable format, you'll need to run the script `galaxevpl` included in bc03 (but the code presented in the next example will do that for you). The `.mass` files are tables listing the evolution of the stellar mass as a function of age for each CSP. They also list luminosity and M/L in a few standard bands.
 
-### Example 2: store model SEDs in python-readable files
+### Example 2: store model SED in .hdf5 files
 
-The code `examples/make_sed_from_csp.py` reads in the files produced by running the `make_csp.py` scripts, renormalizes the model SEDs to a total stellar mass (living stars + remnants) of 1 solar mass, and stores them into 'pickled' files. As for the previous example, copy this file to your preferred directory and then update the values of `ssp_dir` and `work_dir`. This code should take two/three hours to run. The end product should be a few files named `chabrier_Z=....dat`. These are essentially synthetic spectra, so the file size depends on the resolution of the initial SSP models (see note at the bottom on the choice of SSP models).
+The code `examples/get_one_sed_from_csp.py` reads in the files produced by running the `make_one_csp.py` script, renormalizes the model SEDs to a total stellar mass (living stars + remnants) of 1 solar mass, and stores it into .hdf5 files. As in the previous example, copy this file to your preferred directory and then update the values of `ssp_dir` and `work_dir`. This code should run very quickly. The end product should be a new files named `bc03_Z=....age=13.000.hdf5`. This is a synthetic spectrum. The file size depends on the resolution of the initial SSP models (see note at the bottom on the choice of SSP models).
 
-### Example 3: calculate broad band magnitudes on a grid of stellar population parameters for a galaxy at fixed redshift.
+### Example 3: calculate broad band magnitudes of a galaxy given a model CSP SED.
 
-Now that we have synthetic spectra for our CSPs, we can use them to predict model magnitudes for a given galaxy. The script `examples/make_models_fixedz.py` creates an object that allows one to evaluate the magnitude in KiDS u, g, r, i and VISTA k bands for a galaxy at fixed redshift, by interpolating over a grid. This is done by running the script `examples/get_mags_from_model.py`, which calculates the model magnitudes of a galaxy at z=0.609 with given stellar mass, age, star formation decay time, metallicity, dust attenuation. 
+Now that we have a synthetic spectrum for our CSP, we can use it to predict model magnitudes of a given galaxy. The script `examples/get_mags_from_sed.py` calculates the magnitude in VST u, g, r, i bands for a galaxy at a given redshift and stellar mass and prints them to the standard output.
 **The code assumes flat LCDM with OmegaM=0.3 and H0=70 by default**.
 
-### Example 4: fit for the stellar population parameters of a given galaxy
+### Example 4: creating a grid of CSP SEDs.
 
-The code `examples/fit_mags_fixedz_model.py` uses the model created in the previous example to fit for the stellar mass and other parameters of a galaxy observed with HSC. As usual, please update the path in line 14 before running the script. This script requires pymc to run. It should take about a minute to run. The output MCMC chain is stored in a 'pickled' file. The chain has been 'thinned' (only 1 in 10 samples are kept, the others are discarded) to keep file size under control.
+It can be convenient to produce synthetic spectra over a grid of stellar population parameters in a single step, for later use. This is done by the script `examples/make_sed_grid.py`. This code takes hours to run. The main output will be a .hdf5 file containing all spectra at each point of the grid. The script also outputs a large list of files of the kind of those produced by Example 1 (one for each grid point in metallicity, tau, and tau_V). These may be deleted.
 
-### Example 5: create a grid of models over a redshift range, to fit a large number of objects
+### Example 5: calculate broad band magnitudes on a grid of stellar population parameters.
 
-Examples 3 and 4 are fine if you're only interested in fitting a few galaxies. If you're dealing with hundreds of objects or more, it is more efficient to add the 'redshift' dimension to the grid of models used to compute magnitudes.
-The script `examples/make_models_zgrid.py` creates such a model. This should take a couple of hours to complete.
-When it's done, you can run the script `examples/get_mags_from_zgrid_model.py` to evaluate model magnitudes for a galaxy at any redshift between z=0.01 and z=1.0.
+The script `examples/make_mags_grid_fixedz.py` calculates broad band magnitudes (for a 1 Solar mass galaxy) in a set of filters at each point of the stellar population parameter grid created in example 4, at a fixed redshift. It should take a few minutes to run.
 
-### Example 6: fit for the stellar population parameters of a given galaxy, using the model grid created in step 5
-The script `examples/fit_mags_zgrid_model.py` runs an MCMC to fit for the SPS parameters of a galaxy, using the grid of model magnitudes created with the `examples/make_models_zgrid.py` script.
+### Example 6: fit CSP models to the observed broad band magnitudes to infer the stellar mass and the other stellar population parameters
+The script `examples/fit_bbmags.py` runs an MCMC to fit for the SPS parameters of a galaxy, including the stellar mass, using the grid of model magnitudes created with the `examples/make_mags_grid_fixedz.py` script. The output is an .hdf5 file with the chain, as produced by emcee.
 
 ### Notes on the choice of SSP models
 
