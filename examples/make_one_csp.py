@@ -9,6 +9,7 @@ import pygalaxev
 # Low-resolution 'BaSeL' library, Chabrier IMF
 ssp_dir = '/data2/sonnenfeld/bc03/BaSeL3.1_Atlas/Chabrier_IMF/'
 tempname = 'lr_BaSeL'
+work_dir = './'
 
 # Using Padova 1994 tracks. Selects the metallicity:
 
@@ -24,5 +25,5 @@ epsilon = 0. # gas recycling (no recycling if set to zero)
 isedname = ssp_dir+'/bc2003_%s_%s_chab_ssp.ised'%(tempname, Zcode)
 outname = 'bc03_Z=%6.4f_tau=%5.3f_tV=%5.3f_mu=%3.1f_eps=%5.3f'%(Z, tau, tau_V, mu, epsilon)
 
-pygalaxev.run_csp_galaxev(isedname, outname, sfh_pars=1., mu=0.3, epsilon=0., work_dir='./')
+pygalaxev.run_csp_galaxev(isedname, outname, sfh_pars=1., mu=0.3, epsilon=0., work_dir=work_dir)
 
