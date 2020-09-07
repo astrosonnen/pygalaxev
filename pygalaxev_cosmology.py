@@ -17,7 +17,8 @@ Mpc = 3.08568025e24
 c = 2.99792458e10
 G = 6.67300e-8
 
-M_Sun = 1.98892e33
+M_Sun = 1.98892e33 # Solar mass in cgs units
+L_Sun = 3.826e33 # Solar luminosity in cgs units
 
 def comovd(z1, z2=0., cosmo=default_cosmo): # comoving distance in Mpc
     for par in default_cosmo:

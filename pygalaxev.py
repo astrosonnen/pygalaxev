@@ -1,5 +1,8 @@
 import os
 import numpy as np
+import pygalaxev_cosmology
+from pygalaxev_cosmology import Mpc, c as csol, L_Sun
+from scipy.interpolate import splrep, splev, splint
 
 
 def create_galaxevpl_config(configname, cspname, outname, age, wrange=None):
@@ -69,4 +72,48 @@ def run_csp_galaxev(isedname, outname, sfh='tau', sfh_pars=1., tau_V=0.1, mu=0.3
 
     # Clean up
     os.system('rm -f %s/%s*'%(work_dir, output_tmpname))
+
+def get_mag_from_sed(wave, llambda, redshift, filtname, cosmo=pygalaxev_cosmology.default_cosmo):
+
+    filtdir = os.environ.get('PYGALAXEVDIR') + '/filters/'
+    Dlum = pygalaxev_cosmology.Dlum(redshift, cosmo=cosmo) # luminosity distance in Mpc
+
+    wave_obs = wave * (1.+redshift)
+    flambda_obs = llambda*L_Sun/(4.*np.pi*(Dlum*Mpc)**2)/(1.+redshift) # observed specific flux in erg/s/cm^2/AA
+    fnu = flambda_obs * wave_obs**2 / csol * 1e-8 # F_nu in cgs units
+
+    nu_obs = np.flipud(csol/wave_obs*1e8)
+    fnu = np.flipud(fnu)
+
+    fullfiltname = filtdir+filtname
+
+    f = open(fullfiltname, 'r')
+    filt_wave, filt_t = np.loadtxt(f, unpack=True)
+    f.close()
+
+    filt_spline = splrep(filt_wave, filt_t)
+
+    wmin_filt, wmax_filt = filt_wave[0], filt_wave[-1]
+    cond_filt = (wave_obs>=wmin_filt)&(wave_obs<=wmax_filt)
+    nu_cond = np.flipud(cond_filt)
+
+    # Evaluate the filter response at the wavelengths of the spectrum
+    response = splev(wave_obs[cond_filt], filt_spline)
+    nu_filter = csol*1e8/wave_obs[cond_filt]
+
+    # flips arrays
+    response = np.flipud(response)
+    nu_filter = np.flipud(nu_filter)
+
+    # filter normalization
+    bp = splrep(nu_filter, response/nu_filter, s=0, k=1)
+    bandpass = splint(nu_filter[0], nu_filter[-1], bp)
+
+    # Integrate
+    observed = splrep(nu_filter, response*fnu[nu_cond]/nu_filter, s=0, k=1)
+    flux = splint(nu_filter[0], nu_filter[-1], observed)
+
+    mag = -2.5*np.log10(flux/bandpass) -48.6
+
+    return mag
 
