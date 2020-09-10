@@ -49,7 +49,7 @@ output_file = h5py.File(oname.replace('.sed', '.hdf5'), 'w')
 wave_dset = output_file.create_dataset('wave', data=wave)
 wave_dset.attrs['units'] = 'Angstrom'
 
-sed_dset = output_file.create_dataset('llambda', data=wave)
+sed_dset = output_file.create_dataset('Llambda', data=sed)
 sed_dset.attrs['description'] = 'Luminosity density (dL/dlambda) for a 1 Solar Mass (living + remnants) stellar population'
 sed_dset.attrs['units'] = 'L_Sun/Angstrom'
 
