@@ -25,7 +25,7 @@ bands = ['u', 'g', 'r', 'i']
 mags = {'u': 20.45, 'g': 18.52, 'r': 17.34, 'i': 16.92}
 errs = {'u': 0.03, 'g': 0.03, 'r': 0.03, 'i': 0.03}
 
-mags_grid_file = h5py.File(work_dir+'/vst_mags_grid_z=%6.4f.hdf5'%redshift, 'r')
+mags_grid_file = h5py.File(work_dir+'/vst_mags_grid_z=%6.4f_fast.hdf5'%redshift, 'r')
 
 # prepares axes for interpolation
 Z_grid = mags_grid_file['Z_grid'][()]
