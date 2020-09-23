@@ -10,7 +10,7 @@ chain_file = h5py.File(ssp_dir+mcmc, 'r')
 
 print('Parameters of walkers: ',chain_file.keys())
 
-pars = ['logmass', 'logZ', 'tau', 'age', 'tau_V', 'logp', 'mag_u', 'mag_g', 'mag_r', 'mag_i']
+pars = ['logmass', 'logZ', 'tau', 'age', 'tau_V', 'logp', 'mag_u', 'mag_g', 'mag_r', 'mag_i', 'mag_z']
 chain = {}
 for par in pars:
     chain[par] = chain_file[par]
