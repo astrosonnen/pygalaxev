@@ -39,11 +39,10 @@ fig2.set_size_inches(12,8)
 
 for j in np.arange(len(chain)-len(mags), len(chain)):
 	ax = j- len(mags)-2
-	print(ax)
 	for i in range(nr_walkers):
 		axes2[ax].plot(chain[pars[j]][i,:], color='black', alpha=0.3)
 		axes2[ax].set_ylabel(pars[j])
-		axes2[ax].axhline(mags[magnitudes[ax]], color='r')
+		axes2[ax].axhline(mags[magnitudes[ax]], color='r', alpha=0.7, ls='--')
 		axes2[ax].set_xlim([0,300])	
 
 plt.savefig('./walkers_magnitudes.pdf', overwrite=True)
