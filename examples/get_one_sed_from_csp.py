@@ -15,7 +15,7 @@ epsilon = 0.
 
 cspname = 'bc03_Z=%6.4f_tau=%5.3f_tV=%5.3f_mu=%3.1f_eps=%5.3f'%(Z, tau, tau_V, mu, epsilon)
 
-age = 13. # time since beginning of star formation (in Gyr)
+age = 11. # time since beginning of star formation (in Gyr)
 
 # Create the mass normalization models
 massname = work_dir+'/'+cspname+'.mass'

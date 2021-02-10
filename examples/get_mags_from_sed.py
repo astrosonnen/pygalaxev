@@ -12,7 +12,7 @@ work_dir = './'
 pygalaxevdir = os.environ.get('PYGALAXEVDIR')
 filtdir = pygalaxevdir+'/filters/'
 
-redshift = 0.2
+redshift = 0.1945
 Dlum = pygalaxev_cosmology.Dlum(redshift) # luminosity distance in Mpc
 
 log_mstar = 11.
@@ -23,7 +23,7 @@ tau_V = 0.1
 mu = 0.3
 epsilon = 0.
 
-age = 13. # time since beginning of star formation (in Gyr)
+age = 11. # time since beginning of star formation (in Gyr)
 
 cspname = 'bc03_Z=%6.4f_tau=%5.3f_tV=%5.3f_mu=%3.1f_eps=%5.3f'%(Z, tau, tau_V, mu, epsilon)
 sedname = cspname + '_age=%06.3f.hdf5'%age
