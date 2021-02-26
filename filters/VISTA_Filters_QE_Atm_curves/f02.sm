@@ -1,0 +1,91 @@
+f02
+
+  #dev postfile :SY@: :OF@: f02.eps
+
+  data VISTA_Filters_at80K_forETC_Z.dat  read { lZ  1 tZ  2 } set lZ =lZ /1000.0
+  data VISTA_Filters_at80K_forETC_Y.dat  read { lY  1 tY  2 } set lY =lY /1000.0
+  data VISTA_Filters_at80K_forETC_J.dat  read { lJ  1 tJ  2 } set lJ =lJ /1000.0
+  data VISTA_Filters_at80K_forETC_H.dat  read { lH  1 tH  2 } set lH =lH /1000.0
+  data VISTA_Filters_at80K_forETC_Ks.dat read { lKs 1 tKs 2 } set lKs=lKs/1000.0
+  data VISTA_Filters_forETC_NB118.dat  read { lNB118  1 tNB118  2 } set lNB118 =lNB118 /1000.0
+  data VISTA_Filters_forETC_NB980.dat  read { lNB980  1 tNB980  2 } set lNB980 =lNB980 /1000.0
+  data VISTA_Filters_forETC_NB990.dat  read { lNB990  1 tNB990  2 } set lNB990 =lNB990 /1000.0
+
+  data "VISTA_M1_Reflectivity_forETC_2009-Sep12.txt" read { lRM1 1 rM1 2 } set lRM1=lRM1/1000.0
+  data "VISTA_M2_Reflectivity_forETC_2007-Jun19.txt" read { lRM2 1 rM2 2 } set lRM2=lRM2/1000.0
+
+  data trans_10_10.dat lines 3 999999 read { lA1010 1 tA1010 2 } set tA1010=tA1010*100
+  data trans_30_20.dat lines 3 999999 read { lA3020 1 tA3020 2 } set tA3020=tA3020*100
+
+  #data VIRGO_QE_homemade.dat read { lQE 1 QE 2 }
+  data qe.tab read { lQE 1 QE 2 } set lQE=lQE/1000.0
+
+  define lim2 111.99
+  define x_gutter 0.95
+
+  erase lweight 2.3 define y_gutter 0.4
+  expand 1.1 window -10 1 1:8 1
+  limits 0.7700 2.50 0 $lim2
+  box xlabel               \lambda, \mu m
+  ylabel Transmission, Reflectivity, %
+
+  #ctype 0 lweight 0 connect lA1010 tA1010
+  #expand 1.01 relocate 1.6000 101.5 label PWV=1\,mm  sec\,z\,=1.0
+  ctype 0 lweight 0 connect lA3020 tA3020
+  expand 1.01 relocate 1.6000 101.5 label PWV=3\,mm  sec\,z\,=2.0
+
+  define lab1 109.0
+  ctype 7 connect lZ  tZ   set D1=lZ *tZ  if (tZ >50) set D2=tZ  if (tZ >50) set D=D1/D2 stats D m s k relocate $m $lab1 putlabel 2 Z
+  ctype 5 connect lY  tY   set D1=lY *tY  if (tY >50) set D2=tY  if (tY >50) set D=D1/D2 stats D m s k relocate $m $lab1 putlabel 2 Y
+  ctype 6 connect lJ  tJ   set D1=lJ *tJ  if (tJ >50) set D2=tJ  if (tJ >50) set D=D1/D2 stats D m s k relocate $m $lab1 putlabel 2 J
+  ctype 4 connect lH  tH   set D1=lH *tH  if (tH >50) set D2=tH  if (tH >50) set D=D1/D2 stats D m s k relocate $m $lab1 putlabel 2 H
+  ctype 3 connect lKs tKs  set D1=lKs*tKs if (tKs>50) set D2=tKs if (tKs>50) set D=D1/D2 stats D m s k relocate $m $lab1 putlabel 2 Ks
+
+  define lab1 106.0 expand 1.01  ctype 0 connect lNB980  tNB980   set D1=lNB980 *tNB980  if (tNB980 >50) set D2=tNB980  if (tNB980 >50) set D=D1/D2 stats D m s k relocate $m $lab1 putlabel 2 NB980
+  define lab1 103.0 expand 1.01  ctype 3 connect lNB990  tNB990   set D1=lNB990 *tNB990  if (tNB990 >50) set D2=tNB990  if (tNB990 >50) set D=D1/D2 stats D m s k relocate $m $lab1 putlabel 2   NB990
+  define lab1 106.0 expand 1.01  ctype 8 connect lNB118  tNB118   set D1=lNB118 *tNB118  if (tNB118 >50) set D2=tNB118  if (tNB118 >50) set D=D1/D2 stats D m s k relocate $m $lab1 putlabel 2       NB118
+  expand 1.1
+
+  ctype 3 ltype 4 connect lRM1 rM1  relocate 1.4000  95.7 putlabel 5  M1
+  ctype 4 ltype 3 connect lRM2 rM2  relocate 1.4000  99.5 putlabel 8  M2
+  ltype 0
+
+  ctype 6 ltype 2 lweight 4 connect lQE QE  ltype 0 lweight 2.3  relocate 1.4000  89.5 putlabel 8  QE
+  ctype 0
+
+  lweight 2.3 define y_gutter 0.4  expand 1.1 window -10 1 1:8 1  box
+
+
+  define y_gutter 0.6
+  expand 1.1 window -10 1 9:10 1
+  limits 2.50 4.3000 0 $lim2
+  box 1 0 #xlabel \lambda, \mu m
+  #ylabel Transmission, Reflectivity, %
+
+  ctype 0 lweight 0 connect lA1010 tA1010
+  expand 1.01 relocate 2.7500 104 label PWV=1\,mm
+  relocate 2.7500 101 label sec\,z\,=1.0
+  #ctype 0 lweight 0 connect lA3020 tA3020
+  #expand 1.01 relocate 1.5500 102 label PWV=3\,mm  sec\,z\,=2.0
+
+  define lab1 115.0
+  ctype 7 connect lZ  tZ
+  ctype 5 connect lY  tY
+  ctype 6 connect lJ  tJ
+  ctype 4 connect lH  tH
+  ctype 3 connect lKs tKs
+
+  define lab1 113.0 expand 1.01  ctype 0 connect lNB980  tNB980
+  define lab1 106.0 expand 1.01  ctype 3 connect lNB990  tNB990
+  define lab1 113.0 expand 1.01  ctype 8 connect lNB118  tNB118
+  expand 1.3
+
+  ctype 3 ltype 4 connect lRM1 rM1
+  ctype 4 ltype 3 connect lRM2 rM2
+  ltype 0
+
+  ctype 6 ltype 2 lweight 4 connect lQE QE  ctype 0 ltype 0 lweight 2.3
+
+  lweight 2.3 define y_gutter 0.6  expand 1.1 window -10 1 9:10 1  box 1 0
+
+  #dev x11
