@@ -17,10 +17,12 @@ f.close()
 
 atm2_wav *= 1e4
 
-# optical atmospheric transmission (from HSC, because the VISTA one doesn't go blue enough)
-f = open('hsc_response/STD_BANDPASSES_DR1.dat.txt', 'r')
-opt_atm_wav, opt_atm_t = np.loadtxt(f, usecols=(0, 6), unpack=True)
+# optical atmospheric transmission 
+f = open('paranal_atm_transmission.dat', 'r')
+opt_atm_wav, opt_atm_t = np.loadtxt(f, unpack=True)
 f.close()
+
+opt_atm_wav *= 10.
 
 ir_atm_spline = splrep(atm1_wav, atm1_t, k=1)
 opt_atm_spline = splrep(opt_atm_wav, opt_atm_t, k=1)
