@@ -11,7 +11,7 @@ from scipy.interpolate import splrep, splev, splint
 
 # selects the stellar template library:
 # Low-resolution 'BaSeL' library, Chabrier IMF
-ssp_dir = '/data2/sonnenfeld/bc03/BaSeL3.1_Atlas/Chabrier_IMF/'
+ssp_dir = '/data2/sonnenfeld/bc03/BaSeL3.1_Atlas/Salpeter_IMF/'
 tempname = 'lr_BaSeL'
 
 work_dir = './'
@@ -46,8 +46,8 @@ lum_grid = np.zeros(nz)
 tmpname = work_dir+'/tmp.in'
 
 # Create the models
-isedname = ssp_dir+'/bc2003_%s_%s_chab_ssp.ised'%(tempname, Zcode)
-cspname = 'bc03_Z=%6.4f_tau=%5.3f_tV=%5.3f_mu=%3.1f_eps=%5.3f'%(Z, tau, tau_V, mu, epsilon)
+isedname = ssp_dir+'/bc2003_%s_%s_salp_ssp.ised'%(tempname, Zcode)
+cspname = 'bc03_salp_Z=%6.4f_tau=%5.3f_tV=%5.3f_mu=%3.1f_eps=%5.3f'%(Z, tau, tau_V, mu, epsilon)
 
 pygalaxev.run_csp_galaxev(isedname, cspname, sfh_pars=tau, tau_V=tau_V, mu=0.3, epsilon=0., work_dir=work_dir)
 
@@ -124,7 +124,7 @@ for a in range(nage):
 # Clean up
 os.system('rm %s'%oname)
 
-grid_file = h5py.File('ecorr_rband_Z=0.02.hdf5', 'w')
+grid_file = h5py.File('ecorr_rband_Salp_zform2.5_Z=0.02.hdf5', 'w')
 grid_file.attrs['units'] = 'r-band L_Sun for 1M_Sun (living + remnants) at z=0'
 grid_file.attrs['tau'] = tau
 grid_file.attrs['tau_V'] = tau_V
