@@ -35,32 +35,38 @@ def run_csp_galaxev(isedname, outname, sfh='tau', sfh_pars=1., tau_V=0.1, mu=0.3
 
     tmpname = work_dir+'/%s'%input_tmpname
 
-    if sfh == 'tau':
-        tau = sfh_pars
-    else:
-        raise ValueError("Only 'tau' SFH is currently implemented")
-
-    f = open(tmpname, 'w')
-
+    # prepares input file for csp_galaxev
+    inputlines = []
     # Metallicity/IMF
-    f.write('%s\n'%isedname)
+    inputlines.append('%s\n'$isedname)
     # Use dust with tau_V = tV and mu = mu
-    f.write('Y\n')
-    f.write('%f\n'%tau_V)
-    f.write('%f\n'%mu)
-    f.write('0\n') # don't compute flux-weighted age
-    # Use exponential SFH with tau = t
-    f.write('1\n')
-    f.write('%f\n'%tau)
+    inputlines.append('Y\n')
+    inputlines.append('%f\n'%tau_V)
+    inputlines.append('%f\n'%mu)
+    inputlines.append('0\n') # don't compute flux-weighted age
+    # choose star formation history
+    if sfh == 'tau':
+        inputlines.append('1\n')
+        tau = sfh_pars
+        inputlines.append('%f\n'%tau)
+    elif sfh == 'SSP':
+        inputlines.append('0\n')
+    else:
+        raise ValueError("Only 'tau' and 'SSP' SFHs are currently implemented")
+
     # Choose whether or not to recycle gas
     if epsilon!=0:
-        f.write('Y\n')
-        f.write('%f\n'%epsilon)
+        inputlines.append('Y\n')
+        inputlines.append('%f\n'%epsilon)
     else:
-        f.write('N\n')
+        inputlines.append('N\n')
+
     # Cutoff star formation at 20 Gyr
-    f.write('20\n')
-    f.write('%s/%s\n'%(work_dir, output_tmpname))
+    inputlines.append('20\n')
+    inputlines.append('%s/%s\n'%(work_dir, output_tmpname))
+
+    f = open(tmpname, 'w')
+    f.writelines(inputlines)
     f.close()
 
     # Run bc03
