@@ -46,7 +46,7 @@ tmpname = work_dir+'/tmp.in'
 
 # Create the models
 isedname = ssp_dir+'/bc2003_%s_%s_salp_ssp.ised'%(tempname, Zcode)
-cspname = 'bc03_salp_Z=%6.4f_ssp_tV=%5.3f_mu=%3.1f_eps=%5.3f'%(Z, tau, tau_V, mu, epsilon)
+cspname = 'bc03_salp_Z=%6.4f_ssp_tV=%5.3f_mu=%3.1f_eps=%5.3f'%(Z, tau_V, mu, epsilon)
 
 pygalaxev.run_csp_galaxev(isedname, cspname, sfh='SSP', sfh_pars=None, tau_V=tau_V, mu=0.3, epsilon=0., work_dir=work_dir)
 
@@ -125,7 +125,6 @@ os.system('rm %s'%oname)
 
 grid_file = h5py.File('ecorr_rband_Salp_SSP_zform2.5_Z=0.02.hdf5', 'w')
 grid_file.attrs['units'] = 'r-band L_Sun for 1M_Sun (living + remnants) at z=0'
-grid_file.attrs['tau'] = tau
 grid_file.attrs['tau_V'] = tau_V
 grid_file.attrs['Z'] = Z
 grid_file.attrs['z_form'] = z_form
