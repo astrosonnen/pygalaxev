@@ -81,7 +81,10 @@ def run_csp_galaxev(isedname, outname, sfh='tau', sfh_pars=1., tau_V=0.1, mu=0.3
 def get_mag_from_sed(wave, llambda, redshift, filtname, cosmo=pygalaxev_cosmology.default_cosmo):
 
     filtdir = os.environ.get('PYGALAXEVDIR') + '/filters/'
-    Dlum = pygalaxev_cosmology.Dlum(redshift, cosmo=cosmo) # luminosity distance in Mpc
+    if redshift == 0.: # computes absolute magnitude if z=0
+        Dlum = 1e-5
+    else:
+        Dlum = pygalaxev_cosmology.Dlum(redshift, cosmo=cosmo) # luminosity distance in Mpc
 
     wave_obs = wave * (1.+redshift)
     flambda_obs = llambda*L_Sun/(4.*np.pi*(Dlum*Mpc)**2)/(1.+redshift) # observed specific flux in erg/s/cm^2/AA
